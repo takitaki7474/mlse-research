@@ -19,3 +19,9 @@ class processing_feature_table():
         for i in self.feature_table["feature"]:
             feature_sum_values.append(sum(i))
         self.feature_table["feature_sum"] = feature_sum_values
+
+    def feature_table_sort(self,sort_column):
+        self.feature = self.feature.sort_values(by=[sort_column], ascending=True)
+        self.feature = self.feature.reset_index()
+
+    
