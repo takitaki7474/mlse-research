@@ -35,8 +35,8 @@ if __name__=="__main__":
     model_name, feature_table, train_img_folder_path, test_img_folder_path, batchsize, gpu_id, epoch, alpha = arg_parse()
 
     save_model_name = model_name
-    highorder = 10
-    img_num = 50
+    highorder = 100
+    img_num = 100
     image_set = []
 
     table_obj = processing_table.processing_feature_table(feature_table)
@@ -45,6 +45,8 @@ if __name__=="__main__":
     for df in devided_df:
         df = table_obj.feature_table_sort(df,column_name,ascending=False)
         image_set += table_obj.search_img(df,img_num)
+
+    print("訓練データ数: {}".format(len(image_set)))
 
     train_obj = train.train(feature_table, train_img_folder_path, test_img_folder_path, image_set)
     train_iter, valid_iter = train_obj.create_iter(batchsize)
