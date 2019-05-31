@@ -7,7 +7,7 @@ import argparse
 
 
 def arg_parse():
-    parser = argparse.ArugumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument('--model_name', '-m', type=str, help='model name')
     parser.add_argument('--pkl_name', '-pkl', type=str, default='feature_v5_fc7.pkl', help='feature table name')
     parser.add_argument('--train_img_folder_path', '-train', default='./train_img', type=str, help='Train image folder path')
@@ -39,7 +39,7 @@ if __name__=="__main__":
     img_num = 50
     image_set = []
 
-    table_obj = processing_table.processing_table_feature(feature_table)
+    table_obj = processing_table.processing_feature_table(feature_table)
     column_name = table_obj.add_feature_highorder_sum(highorder)
     devided_df = table_obj.table_division()
     for df in devided_df:
@@ -49,4 +49,4 @@ if __name__=="__main__":
     train_obj = train.train(feature_table, train_img_folder_path, test_img_folder_path, image_set)
     train_iter, valid_iter = train_obj.create_iter(batchsize)
     train_obj.train_dataset(train_iter, valid_iter, model_name, gpu_id=gpu_id, alpha=alpha, max_epoch=epoch)
-    train_obj.model_save(save_model)
+    train_obj.model_save(save_model_name)

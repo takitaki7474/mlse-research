@@ -4,7 +4,7 @@ import os
 import cv2
 
 
-class create_dateset():
+class create_dataset():
 
     def __init__(self,feature_table):
         self.feature_table = feature_table
@@ -21,7 +21,7 @@ class create_dateset():
     def create_test_dataset(self,test_img_folder):
         test_dataset = []
         labels = os.listdir(test_img_folder)
-        lables.sort()
+        labels.sort()
         for label in labels:
             labelpath = os.path.join(test_img_folder, label)
             images = os.listdir(labelpath)
@@ -31,7 +31,7 @@ class create_dateset():
 
         return test_dataset
 
-    def dataset_conversion(dataset):
+    def dataset_conversion(self,dataset):
         img_data = []
         label_data = []
 

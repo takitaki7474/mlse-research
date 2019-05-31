@@ -23,10 +23,10 @@ class processing_feature_table():
     def add_feature_highorder_sum(self, highorder):
         column_name = "highorder_sum_" + str(highorder)
         highorder_sum = []
-        for i in self.feature["feature"]:
+        for i in self.feature_table["feature"]:
             sorted_feature = sorted(i, reverse=True)
             highorder_sum.append(sum(sorted_feature[:highorder]))
-        self.feature[column_name] = highorder_sum
+        self.feature_table[column_name] = highorder_sum
 
         return column_name
 
