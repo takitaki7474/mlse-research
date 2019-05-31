@@ -11,43 +11,23 @@ from chainer.training import extensions
 import argparse
 import os
 import cnn_mynet
-import make_train_data
+import processing_table
+import get_dataset
 
 class train():
+    def __init__(self,train_img_folder,test_img_folder,train_images):
+        self.dataset_obj = get_dataset.create_dataset()
+        self.net = cnn_mynet.MyNet_6(3)
+        self.train_img_folder = train_img_folder
+        self.test_img_folder = test_img_folder
+        self.train_images = train_images
 
-    def __init__(self):
+    def create_iter(self,batchsize):
+        train_dataset = self.dataset_obj.create_train_dataset(self.train_img_folder,self.train_images)
+        test_dataset = self.dataset_obj.create_test_dataset(self.test_img_folder)
 
-        parser = argparse.ArgumentParser(description='Train Sample')
-        parser.add_argument('--train_list', '-train', default='./cut_img', type=str, help='Train image folder name')
-        parser.add_argument('--model_name', '-m', default='v1.model', type=str, help='model name')
-        parser.add_argument('--epoch', '-e', type=int, default=80, help='Number of epochs to train')
-        parser.add_argument('--batchsize', '-b', type=int, default=128, help='Number of batchsize to train')
-        parser.add_argument('--alpha', '-a', type=float, default=0.001, help='Number of alpha to train')
-        parser.add_argument('--numpy_file', '-np', type=str, default='random.npy', help='Number of data to train')
-        parser.add_argument('--pkl_file', '-pkl', type=str, default='feature_v2.pkl', help='Number of data to train')
-        args = parser.parse_args()
-
-        self.img_folder = args.train_list
-        self.max_epoch = args.epoch
-        self.batchsize = args.batchsize
-        self.alpha = args.alpha
-        self.model_name = args.model_name
-        self.numpy_file = args.numpy_file
-        self.pkl_file = args.pkl_file
-
-        self.np_file_path = os.path.join("./npy_files", self.numpy_file)
-        self.pkl_file_path = os.path.join("./feature", self.pkl_file)
-        self.save_model_path = os.path.join("./learned_model", self.model_name)
-        self.save_model_path = self.save_model_path + ".model"
-        self.test_folder_path = "./test_img_v2"
-
-    def create_dataset(self):
-
-        train_list, train_image_list = make_train_data.make_train_list(self.img_folder, self.pkl_file_path, self.np_file_path)
-        val_list = make_train_data.make_test_data(self.test_folder_path)
-
-        x_train, y_train = make_train_data.make_dataset(train_list)
-        x_val, y_val = make_train_data.make_dataset(val_list)
+        x_train, y_train = self.dataset_obj.dataset_conversion(train_dataset)
+        x_val, y_val = self.dataset_obj.dataset_conversion(test_dataset)
 
         train_data = tuple_dataset.TupleDataset(x_train, y_train)
         val_data = tuple_dataset.TupleDataset(x_val, y_val)
@@ -57,14 +37,12 @@ class train():
 
         return train_iter, valid_iter
 
-    def train_dataset(self,train_iter,valid_iter):
+    def train_dataset(self,train_iter,valid_iter,gpu_id=-1,alpha=0.001,model_name="mlse_v1.model",max_epoch=300):
 
-        gpu_id = -1
-        self.net = cnn_mynet.MyNet_6(3)
         self.net = L.Classifier(self.net)
-        optimizer = optimizers.Adam(alpha=self.alpha).setup(self.net)
+        optimizer = optimizers.Adam(alpha=alpha).setup(self.net)
         updater = training.StandardUpdater(train_iter, optimizer, device=gpu_id)
-        trainer = training.Trainer(updater, (self.max_epoch, 'epoch'), out="./result/" + self.model_name)
+        trainer = training.Trainer(updater, (max_epoch, 'epoch'), out="./result/" + model_name)
 
         trainer.extend(extensions.LogReport())
         trainer.extend(extensions.snapshot(filename='snapshot_epoch-{.updater.epoch}'))
@@ -79,11 +57,6 @@ class train():
 
         trainer.run()
 
-    def model_save(self):
-        serializers.save_npz(self.save_model_path, self.net)
-
-if __name__=="__main__":
-    train_obj = train()
-    train_iter, valid_iter = train_obj.create_dataset()
-    train_obj.train_dataset(train_iter,valid_iter)
-    train_obj.model_save()
+    def model_save(self,save_model):
+        save_model_path = os.path.join("./learned_model",save_model)
+        serializers.save_npz(save_model_path, self.net)

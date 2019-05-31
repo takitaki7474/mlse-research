@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import os
+import cv2
 
 
 class create_dateset():
@@ -29,3 +30,18 @@ class create_dateset():
                 test_dataset.append((filepath, np.int32(label)))
 
         return test_dataset
+
+    def dataset_conversion(dataset):
+        img_data = []
+        label_data = []
+
+        for filepath, label in dataset:
+            img = cv2.imread(filepath, 1)
+            img = cv2.resize(img,(28,28))
+            img_data.append(img)
+            label_data.append(label)
+
+        img_data = np.array(img_data).astype(np.float32)
+        label_data = np.array(label_data).astype(np.int32)
+
+        return img_data, label_data
