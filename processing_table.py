@@ -28,11 +28,15 @@ class processing_feature_table():
             highorder_sum.append(sum(sorted_feature[:highorder]))
         self.feature[column_name] = highorder_sum
 
-    def feature_table_sort(self,sort_column):
-        self.feature = self.feature.sort_values(by=[sort_column], ascending=True)
-        self.feature = self.feature.reset_index()
+        return column_name
 
-    def search_img(self,img_num):
-        images = list(self.feature["img"][:img_num])
+    def feature_table_sort(self,df,sort_column,ascending=True):
+        df = df.sort_values(by=[sort_column], ascending=ascending)
+        df = df.reset_index()
+
+        return df
+
+    def search_img(self,df,img_num):
+        images = list(df["img"][:img_num])
 
         return images

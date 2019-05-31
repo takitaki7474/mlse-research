@@ -11,12 +11,11 @@ from chainer.training import extensions
 import argparse
 import os
 import cnn_mynet
-import processing_table
 import get_dataset
 
 class train():
-    def __init__(self,train_img_folder,test_img_folder,train_images):
-        self.dataset_obj = get_dataset.create_dataset()
+    def __init__(self,feature_table,train_img_folder,test_img_folder,train_images):
+        self.dataset_obj = get_dataset.create_dataset(feature_table)
         self.net = cnn_mynet.MyNet_6(3)
         self.train_img_folder = train_img_folder
         self.test_img_folder = test_img_folder
@@ -37,7 +36,7 @@ class train():
 
         return train_iter, valid_iter
 
-    def train_dataset(self,train_iter,valid_iter,gpu_id=-1,alpha=0.001,model_name="mlse_v1.model",max_epoch=300):
+    def train_dataset(self,train_iter,valid_iter,model_name,gpu_id=-1,alpha=0.001,max_epoch=300):
 
         self.net = L.Classifier(self.net)
         optimizer = optimizers.Adam(alpha=alpha).setup(self.net)
