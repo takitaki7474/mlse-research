@@ -30,13 +30,20 @@ class processing_feature_table():
 
         return column_name
 
+    def add_feature_num(self):
+        column_name = "feature_num"
+        feature_num = []
+        for i in self.feature_table["feature"]:
+            feature_num.append(len([x for x in i if x>0]))
+        self.feature_table[column_name] = feature_num
+
     def feature_table_sort(self,df,sort_column,ascending=True):
         df = df.sort_values(by=[sort_column], ascending=ascending)
         df = df.reset_index()
 
         return df
 
-    def search_img(self,df,img_num):
+    def over_search_img(self,df,img_num):
         images = list(df["img"][:img_num])
 
         return images
