@@ -47,3 +47,8 @@ class processing_feature_table():
         images = list(df["img"][:img_num])
 
         return images
+
+    def under_search_img(self,df,img_num):
+        images = list(df["img"][-img_num:])
+
+        return images

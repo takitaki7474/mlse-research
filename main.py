@@ -36,7 +36,7 @@ if __name__=="__main__":
 
     save_model_name = model_name
     highorder = 100
-    img_num = 100
+    img_num = 500
     image_set = []
 
     table_obj = processing_table.processing_feature_table(feature_table)
@@ -44,7 +44,8 @@ if __name__=="__main__":
     devided_df = table_obj.table_division()
     for df in devided_df:
         df = table_obj.feature_table_sort(df,column_name,ascending=False)
-        image_set += table_obj.over_search_img(df,img_num)
+        #image_set += table_obj.over_search_img(df,img_num)
+        image_set += table_obj.under_search_img(df,img_num)
 
     print("訓練データ数: {}".format(len(image_set)))
 
